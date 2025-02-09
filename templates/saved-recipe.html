@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Palayok: Saved Recipes{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/recipe-search.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block header %}{% include 'partials/header.html' %}{% endblock %}
+
+{% block content %}
+    <div class="page-title-container">
+        <h1 class="page-title">Your Saved Recipes</h1>
+    </div>
+    <div id="recipeGrid" class="recipe-grid"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const ingredientCategories = {{ ingredient_categories | tojson }};
+
+    async function fetchSavedRecipes() {
+        try {
+            // Get saved recipe IDs from localStorage
+            const savedRecipeIds = JSON.parse(localStorage.getItem('savedRecipes') || '[]');
+            
+            // Fetch all recipes from the server
+            const response = await fetch('/api/recipes');
+            if (!response.ok) {
+                throw new Error('Failed to fetch recipes');
+            }
+            const allRecipes = await response.json();
+            
+            // Filter only saved recipes
+            const savedRecipes = allRecipes.filter(recipe => savedRecipeIds.includes(recipe.id));
+            displayRecipes(savedRecipes);
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('recipeGrid').innerHTML = 
+                '<div class="error">Failed to load saved recipes. Please try again later.</div>';
+        }
+    }
+
+    function displayRecipes(recipes) {
+        const recipeGrid = document.getElementById('recipeGrid');
+        recipeGrid.innerHTML = '';
+        
+        if (recipes.length === 0) {
+            recipeGrid.innerHTML = '<div class="no-recipes">No saved recipes yet!</div>';
+            return;
+        }
+        
+        recipes.forEach(recipe => {
+            const card = document.createElement('div');
+            card.className = 'recipe-card';
+            card.onclick = () => window.location.href = `/recipe-details/${recipe.id}`;
+
+            const itemsHtml = recipe.ingredient_item.slice(0, 5).map(item => 
+                `<div class="item-display">${item}</div>`
+            ).join('');
+
+            card.innerHTML = `
+                <img src="${recipe.image}" alt="${recipe.name}" class="recipe-image">
+                <div class="recipe-content">
+                    <div class="title-container">
+                        <h2 class="recipe-title">${recipe.name}</h2>
+                        <div class="bookmark-container">
+                            <svg class="bookmark-icon active" viewBox="0 0 24 24" onclick="toggleFavorite(event, '${recipe.id}')">
+                                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="cooking-times">
+                        <div class="time-item">
+                            <span class="time-icon">⏱️</span>
+                            <div class="time-details">
+                                <span class="time-label">Prep Time</span>
+                                <span class="time-value">${recipe.prep_time}</span>
+                            </div>
+                        </div>
+                        <div class="time-item">
+                            <span class="time-icon">🍳</span>
+                            <div class="time-details">
+                                <span class="time-label">Cook Time</span>
+                                <span class="time-value">${recipe.cook_time}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="items-grid">
+                        ${itemsHtml}
+                    </div>
+                    ${recipe.ingredient_item.length > 5 ? 
+                        `<p class="more-items">+${recipe.ingredient_item.length - 5} more items</p>` : 
+                        ''}
+                </div>
+            `;
+
+            recipeGrid.appendChild(card);
+        });
+    }
+
+    async function toggleFavorite(event, recipeId) {
+        event.stopPropagation();
+        const savedIcon = event.currentTarget;
+        const recipeCard = savedIcon.closest('.recipe-card');
+        
+        try {
+            const savedRecipes = JSON.parse(localStorage.getItem('savedRecipes') || '[]');
+            const index = savedRecipes.indexOf(recipeId);
+            
+            if (index > -1) {
+                // Remove from saved recipes
+                savedRecipes.splice(index, 1);
+                localStorage.setItem('savedRecipes', JSON.stringify(savedRecipes));
+                
+                // Add fade-out animation
+                recipeCard.style.transition = 'opacity 0.3s ease';
+                recipeCard.style.opacity = '0';
+                
+                // Remove card after animation
+                setTimeout(() => {
+                    recipeCard.remove();
+                    // Check if grid is empty
+                    const recipeGrid = document.getElementById('recipeGrid');
+                    if (recipeGrid.children.length === 0) {
+                        recipeGrid.innerHTML = '<div class="no-recipes">No saved recipes yet!</div>';
+                    }
+                }, 300);
+            }
+        } catch (error) {
+            console.error('Error updating favorite:', error);
+            alert('Failed to update favorite status. Please try again.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchSavedRecipes);
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Palayok: Filipino Recipes{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/css/recipe-details.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block header %}{% include 'partials/header.html' %}{% endblock %}
+
+<body>
+{% block content %}
+    <div class="main-content">
+       <h1 class="recipe-title">{{ recipe.name }}</h1>
+       <h3 class="recipe-prep">
+            <div class="prep-item">
+                <span class="prep-value">{{ recipe.prep_time }}</span>
+                <span class="prep-label">Prep Time</span>
+            </div>
+            <div class="prep-item">
+                <span class="prep-value">{{ recipe.cook_time }}</span>
+                <span class="prep-label">Cook Time</span>
+            </div>
+        </h3>
+
+
+        <div class="ingredient-tags">
+            {% if recipe and recipe.ingredient_item%}
+                {% for item in recipe.ingredient_item %}
+                    <span class="ingredient-tag">{{ item }}</span>
+                {% endfor %}
+            {% else %}
+                <span class="ingredient-tag">No items available</span>
+            {% endif %}
+        </div>
+        
+        <section class="recipe-layout">
+            <a href="{{ recipe.link }}" target="_blank" class="recipe-image">
+                <img src="{{ recipe.image }}" alt="{{ recipe.name }}">
+            </a>
+            <div class="recipe-details">
+                <h2>Ingredients</h2>
+                <ul class="ingredients">
+                    {% if recipe and recipe.ingredients %}
+                        {% for ingredient in recipe.ingredients %}
+                            <li>{{ ingredient }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li>No ingredients available</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </section>    
+
+        <hr>
+
+        <section class="instructions">
+            <div class="recipe-steps">
+                <h2>Instructions</h2>
+                <ol>
+                    {% if recipe and recipe.instructions %}
+                        {% for step in recipe.instructions %}
+                            <li>{{ step }}</li>
+                        {% endfor %}
+                    {% endif %}
+                </ol>
+            </div>
+        </section>
+
+        <div class="recipe-source">
+            {% if recipe and recipe.link %}
+                <a href="{{ recipe.link }}" target="_blank" class="recipe-link">View More</a>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}
+   
+{% block scripts %}
+<script>
+    console.log('Recipe data:', {{ recipe | tojson | safe }});
+    const ingredientCategories = {{ ingredient_categories | tojson | safe }};
+</script>
+{% endblock %}

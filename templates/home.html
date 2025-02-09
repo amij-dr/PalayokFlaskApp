@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Palayok: Filipino Recipes{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block header %}{% include 'partials/header.html' %}{% endblock %}
+
+{% block content %}
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="palayok-home">
+            <h1 class="title">Welcome to Palayok!</h1>
+            <p class="substitle">Your Guide to Authentic Filipino Cooking Discover, Cook, and Savor the Flavors of the Philippines</p>
+            <div class="palayok-img">
+                <a href="https://shef.com/homemade-food/wp-content/uploads/filipino-family-cooking-philippines-culture-history-cuisine-food-homemade-shef.jpg" target="_blank">
+                    <img src="/static/palayok.png" alt="Palayok Logo">
+                </a>
+            </div>
+        </section>
+
+        <section class="palayok-about">
+            <div class="food-abt">
+                Your go-to platform for exploring delicious Filipino recipes with ease! Whether you're craving
+            </div>
+            <div class="food-img">
+                <figure>
+                    <img src="/static/sinigang.png" alt="Sinigang">
+                    <figcaption>a comforting bowl of <h3>Sinigang</h3></figcaption>
+                </figure>
+                <figure>
+                    <img src="/static/adobo.png" alt="Adobo">
+                    <figcaption>a classic <h3>Adobo</h3></figcaption>
+                </figure>
+                <figure>
+                    <img src="/static/halo-halo.png" alt="Halo-halo">
+                    <figcaption>or a sweet serving of <h3>Halo-halo</h3></figcaption>
+                </figure>
+            </div>
+            <div class="food-footer">
+                <img src="/static/logo.png" alt="Palayok Logo">
+                helps you find the perfect dish to cook.
+            </div>
+        </section>
+
+        <div class="features-wrapper">
+            <section class="search-recipe">
+                <div class="search-left">
+                    <img src="/static/filipino-cooking.jpg" alt="Filipino Cooking">
+                    <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM6FlS9jd1fHi48xbiBfra2ABIvxd7PKDJFg&s" class="image-credit cooking-credit" target="_blank">Image Source</a>
+                </div>
+                <div class="search-right">
+                    <p><strong>Search for Recipes Instantly</strong> – Browse through a collection of authentic Filipino recipes, from traditional favorites to modern twists.</p>
+                </div>
+            </section>
+
+            <section class="sari-sari-store">
+                <div class="sari-left">
+                    <p><strong>Cook with What You Have</strong> – Enter the ingredients you have at home, and we'll suggest Filipino dishes you can prepare right away.</p>
+                </div>
+                <div class="sari-right">
+                    <img src="/static/sari-sari.jpg" alt="Sari-sari Store">
+                </div>
+                <a href="https://www.flashpack.com/wp-content/uploads/2022/11/FLASH-PACK2022_PHILLIPINES_UNSPLASH_013_feature.jpg" class="image-credit sari-credit" target="_blank">Image Source</a>
+            </section>
+
+            <section class="grandma-section">
+                <div class="grandma-left">
+                    <img src="/static/grandma.jpg" alt="Grandma Cooking">
+                    <a href="https://shef.com/homemade-food/wp-content/uploads/filipino-family-cooking-philippines-culture-history-cuisine-food-homemade-shef.jpg" class="grandma-credit" target="_blank">Image Source</a>
+                </div>
+                <div class="grandma-right">
+                    <p><strong>Step-by-Step Guidance</strong> – Follow easy-to-understand recipes with detailed instructions, cooking tips, and serving suggestions.</p>
+                </div>
+            </section>
+        </div>
+
+        <section class="culture-cta-section">
+            <p class="culture-text"><strong>Experience Filipino Culture</strong> – Learn the stories behind each dish and immerse yourself in the rich culinary heritage of the Philippines.</p>
+            <p class="cta-text">Start your Filipino cooking journey today with Palayok!</p>
+            <a href="{{ url_for('recipe_search') }}" class="explore-btn">Explore Recipes Now</a>
+            <a href="https://www.flashpack.com/wp-content/uploads/2022/11/FLASH-PACK2022_PHILLIPINES_UNSPLASH_013_feature.jpg" class="image-credit" target="_blank">Image Source</a>
+        </section>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+
+</script>
+{% endblock %}

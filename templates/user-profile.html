@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile - Palayok{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/header.css">
+    <link rel="stylesheet" href="/static/css/user-profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block header %}{% include 'partials/header.html' %}{% endblock %}
+
+{% block content %}
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ user_data.name[0] if user_data and user_data.name else '?' }}
+            </div>
+            <h1>{{ user_data.name if user_data and user_data.name else 'Guest User' }}</h1>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-item">
+                <div class="info-label">Email:</div>
+                <div class="info-value">{{ user_data.email if user_data and user_data.email else 'No email available' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Account Type:</div>
+                <div class="info-value">
+                    {% if user_data.email %}
+                        Email Account
+                    {% else %}
+                        Guest Account
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Member Since:</div>
+                <div class="info-value">
+                    {{ user_data.createdAt.strftime('%B %d, %Y') if user_data and user_data.createdAt else 'Unknown' }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Firebase auth state listener
+    firebase.auth().onAuthStateChanged(async function(user) {
+        if (user) {
+            try {
+                // Ensure Firestore is initialized
+                const db = firebase.firestore();
+                const userRef = db.collection('users').doc(user.uid);
+                const userDoc = await userRef.get();
+
+                if (!userDoc.exists) {
+                    console.error('User document not found');
+                    return;
+                }
+
+                const firestoreData = userDoc.data();
+
+                // Ensure correct display values
+                const displayName = firestoreData.name || user.displayName || 'Guest User';
+                const email = firestoreData.email || user.email || 'No email available';
+                const creationTime = user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : 'N/A';
+                const accountType = user.isAnonymous ? 'Guest Account' : (user.providerData[0]?.providerId === 'google.com' ? 'Google Account' : 'Email Account');
+
+                // Update profile page
+                document.getElementById('profileName').textContent = displayName;
+                document.getElementById('profileEmail').textContent = email;
+                document.getElementById('accountType').textContent = accountType;
+                document.getElementById('memberSince').textContent = creationTime;
+
+                // Set profile initials
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                document.getElementById('profileInitials').textContent = initials;
+
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        } else {
+            window.location.href = '/login';
+        }
+    });
+
+</script>
+{% endblock %}

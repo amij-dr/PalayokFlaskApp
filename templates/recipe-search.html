@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Palayok: Filipino Recipes{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/recipe-search.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block header %}{% include 'partials/header.html' %}{% endblock %}
+
+{% block content %}
+    <div class="page-title-container">
+        <h1 class="page-title">Find Your Perfect Recipe</h1>
+        <p class="page-subtitle">Search through our collection of authentic Filipino recipes</p>
+    </div>
+    <div class="search-filter-container">
+        <div class="search-container">
+            <input type="text" class="search-bar" id="recipe-search" placeholder="Search for recipes...">
+            <div id="search-results" class="search-results"></div>
+        </div>
+        <select id="categoryFilter" onchange="filterRecipes()">
+            <option value="">All Categories</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Gluten-free">Gluten-free</option>
+            <option value="Seafood-free">Seafood-free</option>
+            <option value="Low-carb">Low-carb</option>
+            <option value="Low-fat">Low-fat</option>
+            <option value="Sugar-free">Sugar-free</option>
+        </select>
+    </div>
+
+    <div>
+        <div class="results-counter">
+            <p class="results-counter-text">Loading recipes...</p>
+        </div>
+
+        <div id="recipeGrid" class="recipe-grid"></div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const ingredientCategories = {{ ingredient_categories | tojson }};
+
+    let allRecipes = [];
+    let currentSearchTerm = '';
+    let currentCategory = '';
+    const urlParams = new URLSearchParams(window.location.search);
+    const pantryIngredients = urlParams.get('ingredients') ? 
+        urlParams.get('ingredients').split(',') : [];
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Get saved recipes from localStorage
+    function getSavedRecipes() {
+        const savedRecipes = localStorage.getItem('savedRecipes');
+        return savedRecipes ? JSON.parse(savedRecipes) : [];
+    }
+
+    async function fetchRecipes(category = "") {
+        try {
+            const response = await fetch(`/api/recipes?category=${encodeURIComponent(category)}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const recipes = await response.json();
+            allRecipes = recipes;
+            
+            let filteredRecipes;
+            if (pantryIngredients && pantryIngredients.length > 0) {
+                filteredRecipes = filterByPantryIngredients(recipes, pantryIngredients);
+            } else {
+                filteredRecipes = shuffleArray([...recipes]);
+            }
+            
+            filterAndDisplayRecipes(filteredRecipes);
+        } catch (error) {
+            console.error('Error fetching recipes:', error);
+            document.getElementById('recipeGrid').innerHTML = 
+                '<div class="error">Error loading recipes. Please try again later.</div>';
+        }
+    }
+
+    function filterAndDisplayRecipes(recipes = allRecipes) {
+        let filteredRecipes = [...recipes];
+        
+        if (currentSearchTerm) {
+            filteredRecipes = filteredRecipes.filter(recipe => 
+                recipe.name.toLowerCase().includes(currentSearchTerm.toLowerCase())
+            );
+        }
+        
+        if (currentCategory) {
+            filteredRecipes = filteredRecipes.filter(recipe => 
+                recipe.category.includes(currentCategory)
+            );
+        }
+        
+        if (pantryIngredients.length > 0) {
+            filteredRecipes = filterByPantryIngredients(filteredRecipes, pantryIngredients);
+        }
+        
+        displayRecipes(filteredRecipes);
+    }
+
+    function countPantryMatches(recipe, pantryIngredients) {
+        const recipeItems = recipe.ingredient_item.map(item => item.toLowerCase());
+        const pantryLower = pantryIngredients.map(item => item.toLowerCase());
+        
+        return pantryLower.filter(ingredient => 
+            recipeItems.includes(ingredient)
+        ).length;
+    }
+
+    function filterByPantryIngredients(recipes, pantryIngredients) {
+        if (!pantryIngredients || pantryIngredients.length === 0) return recipes;
+        
+        return recipes
+            .map(recipe => ({
+                ...recipe,
+                matchCount: countPantryMatches(recipe, pantryIngredients)
+            }))
+            .filter(recipe => recipe.matchCount > 0)
+            .sort((a, b) => b.matchCount - a.matchCount);
+    }
+
+    function displayRecipes(recipes) {
+        const recipeGrid = document.getElementById('recipeGrid');
+        const matchCount = document.querySelector('.results-counter-text');
+        const savedRecipes = getSavedRecipes();
+        
+        if (pantryIngredients && pantryIngredients.length > 0) {
+            const matchingRecipes = recipes.filter(recipe => recipe.matchCount && recipe.matchCount > 0);
+            matchCount.textContent = `${matchingRecipes.length} ${matchingRecipes.length === 1 ? 'Recipe' : 'Recipes'} Found with Matching Ingredients`;
+        } else {
+            matchCount.textContent = `${recipes.length} ${recipes.length === 1 ? 'Recipe' : 'Recipes'} Found`;
+        }
+        
+        recipeGrid.innerHTML = '';
+        
+        recipes.forEach(recipe => {
+            const card = document.createElement('div');
+            card.className = 'recipe-card';
+            card.onclick = () => window.location.href = `/recipe-details/${recipe.id}`;
+
+            const hasValidPantryMatches = pantryIngredients && 
+                                        pantryIngredients.length > 0 && 
+                                        recipe.matchCount && 
+                                        recipe.matchCount > 0;
+
+            const itemsHtml = recipe.ingredient_item.slice(0, 5).map(item => {
+                const isPantryMatch = pantryIngredients && pantryIngredients.length > 0 && 
+                                    pantryIngredients.some(
+                                        pantryItem => pantryItem.toLowerCase() === item.toLowerCase()
+                                    );
+                return `<div class="item-display${isPantryMatch ? ' pantry-match' : ''}">${item}</div>`;
+            }).join('');
+
+            const isSaved = savedRecipes.includes(recipe.id);
+
+            card.innerHTML = `
+                <img src="${recipe.image}" alt="${recipe.name}" class="recipe-image">
+                <div class="recipe-content">
+                    <div class="title-container">
+                        <h2 class="recipe-title">${recipe.name}</h2>
+                        <div class="bookmark-container">
+                            <svg class="bookmark-icon ${isSaved ? 'active' : ''}" viewBox="0 0 24 24" onclick="toggleFavorite(event, '${recipe.id}')">
+                                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    ${hasValidPantryMatches ? `
+                        <div class="match-info">
+                            <div class="match-count">✓ ${recipe.matchCount} matching ${recipe.matchCount === 1 ? 'ingredient' : 'ingredients'}</div>
+                        </div>
+                    ` : ''}
+                    <div class="cooking-times">
+                        <div class="time-item">
+                            <span class="time-icon">⏱️</span>
+                            <div class="time-details">
+                                <span class="time-label">Prep Time</span>
+                                <span class="time-value">${recipe.prep_time}</span>
+                            </div>
+                        </div>
+                        <div class="time-item">
+                            <span class="time-icon">🍳</span>
+                            <div class="time-details">
+                                <span class="time-label">Cook Time</span>
+                                <span class="time-value">${recipe.cook_time}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="items-grid">
+                        ${itemsHtml}
+                    </div>
+                    ${recipe.ingredient_item.length > 5 ? 
+                        `<p class="more-items">+${recipe.ingredient_item.length - 5} more items</p>` : 
+                        ''}
+                </div>
+            `;
+
+            recipeGrid.appendChild(card);
+        });
+    }
+
+    async function toggleFavorite(event, recipeId) {
+        event.stopPropagation();
+        const savedIcon = event.currentTarget;
+        
+        try {
+            const savedRecipes = getSavedRecipes();
+            const isFavorited = savedRecipes.includes(recipeId);
+            
+            if (isFavorited) {
+                // Remove from saved recipes
+                const updatedRecipes = savedRecipes.filter(id => id !== recipeId);
+                localStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));
+                savedIcon.classList.remove('active');
+            } else {
+                // Add to saved recipes
+                savedRecipes.push(recipeId);
+                localStorage.setItem('savedRecipes', JSON.stringify(savedRecipes));
+                savedIcon.classList.add('active');
+                
+                // Visual effect
+                savedIcon.style.transform = 'scale(1.2)';
+                setTimeout(() => savedIcon.style.transform = 'scale(1)', 200);
+            }
+        } catch (error) {
+            console.error('Error updating favorite:', error);
+            alert('Failed to update favorite status. Please try again.');
+        }
+    }
+
+    function searchRecipesByName() {
+        currentSearchTerm = document.getElementById('recipe-search').value;
+        filterAndDisplayRecipes();
+    }
+
+    function filterRecipes() {
+        currentCategory = document.getElementById('categoryFilter').value;
+        filterAndDisplayRecipes();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Content Loaded');
+        const searchInput = document.getElementById('recipe-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', searchRecipesByName);
+        }
+        
+        fetchRecipes();
+    });
+</script>
+{% endblock %}

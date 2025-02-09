@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Palayok: Filipino Recipes{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/css/about.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block header %}{% include 'partials/header.html' %}{% endblock %}
+
+{% block content %}
+    <div class="about-container">
+        <h1>What is Palayok?</h1>
+        <p>The <b>Palayok App</b> is a web-based platform that brings together a curated collection of traditional and modern Filipino recipes. Named after the iconic clay pot "<b><i>palayok</i></b>", the app preserves Filipino culinary heritage by providing an easy-to-navigate, user-friendly interface for discovering and preparing authentic dishes. Many of the recipes are curated from <span style="color: #FC9800;">Panlasang Pinoy</span>, a renowned Filipino food website by Vanjo Merano, ensuring authenticity and quality.</p>
+        
+        <p>Key features include recipe discovery by dietary preferences, ingredient-based filtering, bookmarking, and personalized user profiles for saving favorite recipes. Designed for Filipino food enthusiasts, the Palayok App bridges tradition and modern cooking practices with its sleek and intuitive design.</p>
+    </div>
+    
+    <div class="team-section">
+        <h2>About Us</h2>
+
+        <div class="team-members">
+            <div class="team-member">
+                <img src="/static/alex.jpg" alt="Alex">
+                <h3>Manuelle Alexie Bukas</h3>
+                <p>UI/UX Designer</p>
+            </div>
+            <div class="team-member">
+                <img src="/static/jima.jpg" alt="Jima">
+                <h3>Jimalyn Del Rosario</h3>
+                <p>UI/UX, Fullstack Developer, and Data Collector</p>
+            </div>
+            <div class="team-member">
+                <img src="/static/matt.jpg" alt="Matt">
+                <h3>Ernest Matthew Maravilla</h3>
+                <p>UI/UX Designer</p>
+            </div>
+            <div class="team-member">
+                <img src="/static/ernard.jpg" alt="Ernard">
+                <h3>Carl Ernard Marcos</h3>
+                <p>UI/UX Designer, Frontend Developer</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>n bvcc
+    const ingredientCategories = {{ ingredient_categories | tojson }};
+</script>
+{% endblock %}

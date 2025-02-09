@@ -1,0 +1,50 @@
+<header>
+    <!-- Overlay for Pantry Side Panel -->
+    <div class="overlay" id="overlay"></div> 
+
+    <!-- Navigation Bar-->
+    <div class="home__nav">
+        <button class="pantry-toggle" id="pantry-toggle">☰</button>
+        <a href="{{ url_for('home') }}">
+            <img class="palayok-logo" src="\static\logo.png" alt="palayok-logo">
+        </a>
+        <a href="{{ url_for('about') }}" class="about-btn" id="about-btn">About</a>
+    </div>
+
+    <div class="nav__bar">
+        <a href="{{ url_for('recipe_search') }}"> <!-- Updated path to match Flask route -->
+            <i class="search-icon">
+                <img src="\static\search.svg" alt="search-icon" width="25" height="26">
+            </i>
+        </a>
+        <a href="{{ url_for('saved_recipe') }}">
+            <img src="\static\bookmark.svg" alt="bookmark-icon" width="25" height="30">
+        </a>
+        
+        <a href="{{ url_for('profile') }}">
+            <img src="/static/profile-icon.svg" alt="Profile" width="25" height="25">
+        </a>
+        <button class="logout-btn" id="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+
+    <!-- Pantry Side Panel-->
+     <div class="side-panel" id="side-panel">
+        <h2 class="pantry-header">What's in your pantry?</h2>
+
+        <div class="ingredient-search">
+            <input type="text" id="ingredient-search" placeholder="Search ingredients...">
+            <div id="search-results" class="search-results"></div>
+        </div>
+
+        <div id="pantry-items" style="padding: 16px;"></div>
+
+        <div id="recipe-search-btn" style="padding: 16px;">
+            <div class="pantry-buttons">
+                <button onclick="clearPantryItems()" class="clear-pantry-btn">Clear Pantry</button>
+                <button onclick="searchRecipes()" class="search-pantry-btn">Search Recipes</button>
+            </div>
+        </div>
+
+        <div id="ingredient-categories"></div>
+    </div>
+</header>
