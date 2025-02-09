@@ -34,14 +34,15 @@ This web application serves as the final requirement for the App Development cou
 ---
 
 ### Key Features:
-- **Recipe Discovery:** Users can explore a wide range of Filipino recipes with details such as ingredients, preparation instructions, and cooking times.
+- **Pantry Toggle:**  A side panel lets users filter recipes based on selected ingredients.
+![Pantry](images/Pantry.jpg)
+![PantryMatch](images/PantryMatch.jpg)
+- **Recipe Discovery:** Users can explore a wide range of Filipino recipes with details such as ingredients, preparation instructions, and cooking times. It has a search bar for recipe name search and a dropdown for dietary category search.
 ![Recipe1](images/Recipe1.jpg)
+- **Recipe Details:** Each recipe page includes a list of ingredients, preparation instructions, and cooking times. Users can also view the recipe's nutritional information.
+![View](images/View.jpg)
 - **Personalized Experience:** Users can create accounts to save and access their favorite recipes anytime. The app allows ingredient-based recipe filtering.
 ![Login](images/Login.jpg)
-- **User Profiles:** Users can sign up, log in, and manage their profiles, including saved recipes.
-
-- **Pantry Toggle:** A side panel lets users filter recipes based on selected ingredients.
-![Pantry](images/Pantry.jpg)
 - **Bookmarking:** Users can save recipes for future reference.
 ![Saved](images/Saved.jpg)
 
