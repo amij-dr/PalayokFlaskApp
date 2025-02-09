@@ -8,7 +8,7 @@
 
 ## Created by:
 - **Del Rosario, Jimalyn**  (UI/UX, Fullstack)
-    - Scraped, cleaned, and organized 1500+ recipe data from Panlasang Pinoy website
+    - Scraped, cleaned, organized, and categorized 1500+ recipe data from Panlasang Pinoy website
     - Created filtering mechanisms for ingredient-based recipe search, recipe name search, and dietary category search
     - Created recipe saving and viewing functionalities
     - Built the pantry toggle feature for ingredient-based recipe search
@@ -22,7 +22,7 @@
 
 - **Maravilla, Ernest Matthew** (UI/UX)
     - Created app logo and color scheme
-    - Helped clean up recipe data
+    - Helped clean up and categorize recipe data
 
 - **Bukas, Manuelle Alexie**  (UI/UX)
     - Built structure for navigation bar and about page
