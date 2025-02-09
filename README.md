@@ -2,7 +2,7 @@
 
 ![Home](images/Home.jpg)
 
-**Palayok** is a web-based application designed to help users discover, save, and enjoy Filipino recipes. Derived from the Filipino word "palayok," which refers to a traditional clay pot, the app serves as a digital vessel for Filipino culinary heritage. It features a curated collection of traditional and modern Filipino recipes scraped from *Panlasang Pinoy*, a well-known Filipino food website by Vanjo Merano.
+**Palayok** is a web-based application designed to help users discover, save, and enjoy Filipino recipes. Derived from the Filipino word "palayok," which refers to a traditional clay pot, the app serves as a digital vessel for Filipino culinary heritage. It features a curated collection of traditional and modern Filipino recipes scraped from *[Panlasang Pinoy](https://panlasangpinoy.com/)*, a well-known Filipino food website by Vanjo Merano.
 
 ![Recipe](images/Recipe.jpg)
 
