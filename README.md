@@ -14,11 +14,11 @@
     - Built the pantry toggle feature for ingredient-based recipe search
     - Built the user authentication system with firebase (sign up, log in, log out features only incorporated for in deployment version) 
     - Built the user saved recipe functionalities with firestore (firestore db only incorporated in the deployment version)
-    - Designed web pages background, and final styles for recipe search page, recipe view page, and about page
+    - Designed web pages background, and final styles for pantry toggle, recipe search page, recipe view page, and about page
 
 - **Marcos, Carl Ernard**  (UI/UX, Frontend)
     - Built the structure for the home page, recipe search page, and recipe view page
-    - Designed the home page, recipe search page, and recipe view page
+    - Designed the home page, recipe search page, pantry toggle, and recipe view page
 
 - **Maravilla, Ernest Matthew** (UI/UX)
     - Created app logo and color scheme
